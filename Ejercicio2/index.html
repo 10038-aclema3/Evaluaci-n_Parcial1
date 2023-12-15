@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container card text-center mt-5">
+        <emisor-component class="m-3" id="emisor-component"></emisor-component>
+
+        <receptor-component id="receptor-component"></receptor-component>
+    </div>
+</body>
+<script>
+    class BotonCambioMensaje extends HTMLElement {
+        constructor() {
+            super();
+
+            // Adjunta el shadow DOM
+            this.attachShadow({ mode: 'open' });
+
+            // Crea el botón dentro del shadow DOM
+            this.shadowRoot.innerHTML = ` 
+                <style>
+                    .mi-boton {
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        border-radius: 5px;
+                        background-color: #F0EC62;
+                        color: #fff;
+                        cursor: pointer;
+                    }
+
+                    .mi-boton:hover {
+                        background-color: ##F0EC62;
+                    }
+                </style>
+                <button class="mi-boton" id="miBoton">Click Aquí</button>
+            `;
+
+            this.shadowRoot.getElementById('miBoton').addEventListener('click', this.ejecutar.bind(this));
+        }
+
+        ejecutar() {
+            this.dispatchEvent(new CustomEvent('cambio-mensaje'));
+        }
+    }
+
+    // Define el nuevo elemento personalizado para el botón
+    customElements.define('emisor-component', BotonCambioMensaje);
+
+    class TextoCambio extends HTMLElement {
+        constructor() {
+            super();
+
+            // Adjunta el shadow DOM
+            this.attachShadow({ mode: 'open' });
+
+            // Crea el div dentro del shadow DOM
+            this.shadowRoot.innerHTML = `
+                <div id="miDiv">Sabías que </div>
+            `;
+        }
+
+        cambiarTexto() {
+            var div = this.shadowRoot.getElementById("miDiv");
+            div.innerHTML = "Los osos son animales salvajes y deben tratarse con respeto y precaución. En encuentros con osos en la naturaleza, es importante seguir las prácticas recomendadas de seguridad y conservación para proteger tanto a los humanos como a los osos.";
+        }
+    }
+
+    // Define el nuevo elemento personalizado para el texto
+    customElements.define('receptor-component', TextoCambio);
+
+    const boton = document.getElementById('emisor-component');
+    const mensaje = document.getElementById('receptor-component');
+    boton.addEventListener('cambio-mensaje', () => {
+        mensaje.cambiarTexto();
+    })
+</script>
+
+</html>
